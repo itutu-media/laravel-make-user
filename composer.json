@@ -20,5 +20,12 @@
             "email": "hello@itutu-media.id"
         }
     ],
+    "extra": {
+      "laravel": {
+        "providers": [
+          "ItutuMedia\\LaravelMakeUser\\CreateUserServiceProvider"
+        ]
+      }
+    },
     "minimum-stability": "stable"
 }
