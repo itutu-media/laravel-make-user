@@ -4,7 +4,7 @@ namespace ItutuMedia\LaravelMakeUser;
 
 use Illuminate\Support\ServiceProvider;
 
-class CreateCliUserCommandServiceProvider extends ServiceProvider
+class CreateUserServiceProvider extends ServiceProvider
 {
     public function boot()
     {
