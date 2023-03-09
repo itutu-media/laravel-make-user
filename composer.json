@@ -2,6 +2,7 @@
     "name": "itutu-media/laravel-make-user",
     "description": "Create a new user with Artisan",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^8.0"
     },
