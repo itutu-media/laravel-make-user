@@ -3,8 +3,8 @@
 namespace ITUTUMedia\LaravelMakeUser\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use ITUTUMedia\LaravelMakeUser\LaravelMakeUserServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {

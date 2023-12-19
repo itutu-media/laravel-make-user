@@ -2,9 +2,9 @@
 
 namespace ITUTUMedia\LaravelMakeUser;
 
+use ITUTUMedia\LaravelMakeUser\Commands\LaravelMakeUserCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use ITUTUMedia\LaravelMakeUser\Commands\LaravelMakeUserCommand;
 
 class LaravelMakeUserServiceProvider extends PackageServiceProvider
 {
