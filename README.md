@@ -5,6 +5,11 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/itutu-media/laravel-make-user/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/itutu-media/laravel-make-user/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/itutu-media/laravel-make-user.svg?style=flat-square)](https://packagist.org/packages/itutu-media/laravel-make-user)
 
+## Dependencies
+
+- [Spatie Permission package (optional)](https://github.com/spatie/laravel-permission)
+If you want to use the `--superuser` or `--roles` options, make sure the Spatie Permission package is installed and configured in your Laravel application.
+
 ## Installation
 
 You can install the package via composer:
@@ -32,18 +37,30 @@ return [
 ];
 ```
 
-Optionally, you can publish the views using
+## Configuration
 
-```bash
-php artisan vendor:publish --tag="laravel-make-user-views"
-```
+Open file `config/make-user.php` and change the rules based on your needs for the new user.
 
 ## Usage
-
-```php
-$laravelMakeUser = new ITUTUMedia\LaravelMakeUser();
-echo $laravelMakeUser->echoPhrase('Hello, ITUTUMedia!');
+Once installed, you can use the `make:user` command to create a new user. Here's an example:
+```bash
+php artisan make:user
 ```
+### Command Options
+The `make:user` command supports the following options:
+> `--superadmin` (`-S`): Assign the superadmin role to the new user. Requires the `Spatie\Permission\Traits\HasRoles` trait to be added to the User model.
+> `--roles` (`-R`): Assign roles to the new user. Requires the `Spatie\Permission\Traits\HasRoles` trait to be added to the User model.
+### - Super Admin
+To use the `--superadmin` option, you need to set the `super_admin_role_name` value in the `config/make-user.php` file. Here's an example of using the make:user command with the `--superadmin` option:
+```bash
+php artisan make:user --superuser
+```
+### - Roles
+Here's an example of using the make:user command with the `--roles` options:
+```bash
+php artisan make:user --role
+```
+This will prompt you to enter values for fillable nullable columns and select the roles to assign to the new user.
 
 ## Testing
 
@@ -66,7 +83,6 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [ITUTU Media](https://github.com/itutu-media)
-- [All Contributors](../../contributors)
 
 ## License
 
