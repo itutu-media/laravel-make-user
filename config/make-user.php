@@ -8,4 +8,7 @@ return [
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
     ],
+    'default' => [
+        'super_admin' => env('SUPER_ADMIN_ROLE_NAME', 'Super Admin'),
+    ]
 ];

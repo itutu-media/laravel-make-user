@@ -49,6 +49,7 @@ php artisan make:user
 ### Command Options
 The `make:user` command supports the following options:
 > `--superadmin` (`-S`): Assign the superadmin role to the new user. Requires the `Spatie\Permission\Traits\HasRoles` trait to be added to the User model.
+> 
 > `--roles` (`-R`): Assign roles to the new user. Requires the `Spatie\Permission\Traits\HasRoles` trait to be added to the User model.
 ### - Super Admin
 To use the `--superadmin` option, you need to set the `super_admin_role_name` value in the `config/make-user.php` file. Here's an example of using the make:user command with the `--superadmin` option:
