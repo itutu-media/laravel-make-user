@@ -10,5 +10,5 @@ return [
     ],
     'default' => [
         'super_admin' => env('SUPER_ADMIN_ROLE_NAME', 'Super Admin'),
-    ]
+    ],
 ];

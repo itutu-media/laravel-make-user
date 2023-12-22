@@ -7,7 +7,11 @@ use Illuminate\Console\Command;
 class LaravelMakeUserCommand extends Command
 {
     private $user;
-    protected $password, $password_confirmation;
+
+    protected $password;
+
+    protected $password_confirmation;
+
     /**
      * The name and signature of the console command.
      *
@@ -32,20 +36,21 @@ class LaravelMakeUserCommand extends Command
         // Get the User model class based on the current authentication configuration
         $class = config(
             'auth.providers.'
-                . config(
+                .config(
                     'auth.guards.'
-                        . config('auth.defaults.guard', 'web')
-                        . '.provider'
+                        .config('auth.defaults.guard', 'web')
+                        .'.provider'
                 )
-                . '.model'
+                .'.model'
         );
 
         // Create a new instance of the User model
         $this->user = new $class();
 
         if ($this->option('superadmin')) {
-            if (!in_array('Spatie\Permission\Traits\HasRoles', class_uses($this->user)))
+            if (! in_array('Spatie\Permission\Traits\HasRoles', class_uses($this->user))) {
                 return $this->error('The super admin option requires the Spatie\Permission\Traits\HasRoles trait to be added to the User model');
+            }
 
             $role = config('make-user.default.super_admin') ?? 'Super Admin';
             $guard = $this->option('guard') ?? $this->user->guard_name;
@@ -68,8 +73,9 @@ class LaravelMakeUserCommand extends Command
         }
 
         if ($this->option('roles')) {
-            if (!in_array('Spatie\Permission\Traits\HasRoles', class_uses($this->user)))
+            if (! in_array('Spatie\Permission\Traits\HasRoles', class_uses($this->user))) {
                 return $this->error('The roles option requires the Spatie\Permission\Traits\HasRoles trait to be added to the User model');
+            }
 
             $model = app(config('permission.models.role'));
             $roles = $model::all()->pluck('name')->toArray();
@@ -87,7 +93,7 @@ class LaravelMakeUserCommand extends Command
             }
             $this->info('User created successfully');
         } catch (\Exception $e) {
-            return $this->error('Error creating user: ' . $e->getMessage());
+            return $this->error('Error creating user: '.$e->getMessage());
         }
 
         return self::SUCCESS;
@@ -96,7 +102,7 @@ class LaravelMakeUserCommand extends Command
     /**
      * Retrieve the columns of a database table, filtering out auto-incrementing and timestamp columns.
      *
-     * @param string $table The name of the database table to retrieve columns for.
+     * @param  string  $table The name of the database table to retrieve columns for.
      * @return array An array of database column objects.
      */
     private function _getColumns(string $table): array
@@ -112,7 +118,7 @@ class LaravelMakeUserCommand extends Command
                 type != 'timestamp' AND
                 extra != 'auto_increment'
             )";
-        } else if ($conn == 'pgsql') {
+        } elseif ($conn == 'pgsql') {
             $query = "
             SELECT
                 *, data_type AS \"Type\", column_name AS \"Field\", is_nullable AS \"Null\"
@@ -130,26 +136,25 @@ class LaravelMakeUserCommand extends Command
     /**
      * Prompt the user to enter a valid password value for the given field, and validate the input.
      *
-     * @param string $field The name of the password field.
-     * @return void
+     * @param  string  $field The name of the password field.
      */
     private function _inputPassword(string $field): void
     {
         // password validation rules
-        $rules = config('make-user.rules.' . $field, 'nullable');
+        $rules = config('make-user.rules.'.$field, 'nullable');
 
         // loop until a valid password value is entered
         do {
             // prompt the user to enter a password value, and check its length
-            $this->password = $this->secret(ucfirst($field) . ' (password not displayed)');
+            $this->password = $this->secret(ucfirst($field).' (password not displayed)');
             if (strlen($this->password) < 8) {
                 $this->warn('Password must be at least 8 characters long');
             }
             // Validate the password and confirmation fields
             $validator = $this->_validate([
-                $field => $this->password
+                $field => $this->password,
             ], [
-                $field => $rules
+                $field => $rules,
             ]);
         } while ($validator->fails());
 
@@ -159,26 +164,25 @@ class LaravelMakeUserCommand extends Command
     /**
      * Prompt the user to enter a valid password value for the given field, and validate the input.
      *
-     * @param string $field The name of the password field.
-     * @return void
+     * @param  string  $field The name of the password field.
      */
     private function _inputPasswordConfirmation(string $field): void
     {
         // password validation rules
-        $rules = config('make-user.rules.' . $field, 'nullable') . '|confirmed';
+        $rules = config('make-user.rules.'.$field, 'nullable').'|confirmed';
 
         // Loop until the password passes validation rules
         do {
-            $this->password_confirmation = $this->secret('Confirm ' . ucfirst($field) . ' (press r to re-enter the password)');
+            $this->password_confirmation = $this->secret('Confirm '.ucfirst($field).' (press r to re-enter the password)');
             if ($this->password_confirmation == 'r') {
                 $this->_inputPassword($field);
             }
             // Validate the password and confirmation fields
             $validator = $this->_validate([
                 $field => $this->password,
-                $field . '_confirmation' => $this->password_confirmation
+                $field.'_confirmation' => $this->password_confirmation,
             ], [
-                $field => $rules
+                $field => $rules,
             ]);
         } while ($validator->fails());
 
@@ -189,23 +193,22 @@ class LaravelMakeUserCommand extends Command
     /**
      * Prompt the user to input a value for a given field.
      *
-     * @param string $field The name of the field to prompt for input.
-     * @return void
+     * @param  string  $field The name of the field to prompt for input.
      */
     private function _input(string $field): void
     {
         // Set validation rules for the field
-        $rules = config('make-user.rules.' . $field, 'nullable');
+        $rules = config('make-user.rules.'.$field, 'nullable');
 
         // Set a default value for the field, if one is defined in the config file
-        $default = config('make-user.default.' . $field, null);
+        $default = config('make-user.default.'.$field, null);
 
         // Prompt the user to input a value for the field, and validate the input using the rules above
         do {
             $validator = $this->_validate([
-                $field => $this->ask(str_contains($rules, 'required') ? ucfirst($field) . ' (required)' : ucfirst($field) . ' (optional)', $default)
+                $field => $this->ask(str_contains($rules, 'required') ? ucfirst($field).' (required)' : ucfirst($field).' (optional)', $default),
             ], [
-                $field => $rules
+                $field => $rules,
             ]);
         } while ($validator->fails());
 
@@ -216,20 +219,22 @@ class LaravelMakeUserCommand extends Command
     /**
      * Validate an array of data against a set of validation rules.
      *
-     * @param array $data An associative array of data to validate.
-     * @param array $rules An associative array of validation rules.
+     * @param  array  $data An associative array of data to validate.
+     * @param  array  $rules An associative array of validation rules.
      * @return \Illuminate\Contracts\Validation\Validator The validator instance.
      */
     private function _validate($data, $rules): \Illuminate\Contracts\Validation\Validator
     {
         // Create a validator instance for the given data and rules
         $validator = \Illuminate\Support\Facades\Validator::make($data, $rules, [
-            'password.regex' => 'The :attribute must contain at least one uppercase letter, one lowercase letter, and one number'
+            'password.regex' => 'The :attribute must contain at least one uppercase letter, one lowercase letter, and one number',
         ]);
 
         // If the validator fails, output a warning with the first validation error message
-        if ($validator->fails())
-            $this->warn('Validation error: ' . $validator->errors()->first());
+        if ($validator->fails()) {
+            $this->warn('Validation error: '.$validator->errors()->first());
+        }
+
         return $validator;
     }
 }
