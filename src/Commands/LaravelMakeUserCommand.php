@@ -27,7 +27,7 @@ class LaravelMakeUserCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         // Get the User model class based on the current authentication configuration
         $class = config(
@@ -89,6 +89,8 @@ class LaravelMakeUserCommand extends Command
         } catch (\Exception $e) {
             return $this->error('Error creating user: ' . $e->getMessage());
         }
+
+        return self::SUCCESS;
     }
 
     /**
